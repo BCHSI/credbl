@@ -1,0 +1,5 @@
+pymongo
+click
+getpass
+keyring
+pyyaml
