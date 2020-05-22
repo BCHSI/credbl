@@ -1,4 +1,4 @@
-# CreDBl: database credential management package
+# Credbl: database credential management package
 
 ## Installation
 
