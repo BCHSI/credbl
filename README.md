@@ -16,5 +16,5 @@
 ## Files
 
 - [dbfunctions.R](dbfunctions.R) authentication (keyring and Windows ODBC) and dbplyr-based shortcuts
-- [credentials.py](credentials.py) authentication
-- [mongodb_utils.py](mongodb_utils.py) wrapper for db connection and authentication for MongoDB
+- [credentials.py](credbl/credentials.py) authentication
+- [mongodb_utils.py](credbl/mongodb_utils.py) wrapper for db connection and authentication for MongoDB
