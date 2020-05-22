@@ -42,7 +42,7 @@ The `"mongo-settings.yaml"` file must contain following:
     url: mongodb://10.20.30.40:27017
     db: 'databasename'
 
-Alternatively / optionally to URL, server or ip and port can be provided:
+Alternatively / optionally to URL, server or IP address and port can be provided:
 
     server: xyz.company.org
     ip: 10.20.30.40
@@ -55,7 +55,7 @@ Alternatively / optionally to URL, server or ip and port can be provided:
 
     In [2]: credbl.get_credentials('something')
     enter user name for 'something': []: myname
-    enter password for 'myname'
+    enter password for 'myname':
     Out[2]: ('myname', 'xyz')
 
     In [3]: credbl.get_credentials('something')
