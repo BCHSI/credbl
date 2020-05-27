@@ -2,8 +2,7 @@
 % Please edit documentation in R/credentials.R
 \name{get_mssql_driver}
 \alias{get_mssql_driver}
-\title{retrieves default driver
-(Mac / Unix: FreeTDS, Windows: SQL Server)}
+\title{retrieves default driver}
 \usage{
 get_mssql_driver(dbconfig = list())
 }

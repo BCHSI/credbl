@@ -29,6 +29,11 @@ or terminal + R:
     > library(devtools)
     > install('.')
 
+get help:
+    
+```R
+?credbl
+```
     
 ## Usage examples:
 

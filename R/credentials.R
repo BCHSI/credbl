@@ -96,7 +96,7 @@ get_credentials_windows <- function(server, reset=F,
 #' @param reset    whether to reset credentials should they be already recorded in the registry
 #' @param urlencode   URL-encode the password
 #' @param forcekeyring   force keyring credential storage on Windows (on Mac and Unix keyring is used by default)
-#' @param domain    require username to have a domain prefix ("domain\username")
+#' @param domain    require username to have a domain prefix ("domain\\username")
 #' @return list(uid="myusername", pwd="password") # on Mac / Unix and list(uid=NULL, pwd=NULL) # on Windows
 get_credentials <- function(server=NULL, reset=F, urlencode=F, forcekeyring=F, domain=T){
   print(glue("retrieving credentials for '{server}'"))
