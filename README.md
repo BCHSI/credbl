@@ -2,9 +2,21 @@
 
 ## Installation
 
+### Python package
+
     git clone https://github.com/BCHSI/credbl
     cd credbl
     pip install .
+
+### R package
+
+    git clone https://github.com/BCHSI/credbl
+    cd credbl
+    R
+    > install.packages('devtools')
+    > library(devtools)
+    > install('.')
+
     
 ## Usage examples:
 
