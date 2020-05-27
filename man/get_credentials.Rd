@@ -21,7 +21,7 @@ get_credentials(
 
 \item{forcekeyring}{force keyring credential storage on Windows (on Mac and Unix keyring is used by default)}
 
-\item{domain}{require username to have a domain prefix ("domain\username")}
+\item{domain}{require username to have a domain prefix ("domain\\username")}
 }
 \value{
 list(uid="myusername", pwd="password") # on Mac / Unix and list(uid=NULL, pwd=NULL) # on Windows

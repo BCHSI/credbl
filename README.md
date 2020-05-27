@@ -1,14 +1,26 @@
-# CreDBl: database credential management package
+# Credbl: database credential management package
 
 ## Installation
 
 ### Python package
+
+from terminal shell:
 
     git clone https://github.com/BCHSI/credbl
     cd credbl
     pip install .
 
 ### R package
+
+from R:
+
+```R
+install.packages('devtools')
+library(devtools)
+install_github('https://github.com/BCHSI/credbl')
+```
+
+or terminal + R:
 
     git clone https://github.com/BCHSI/credbl
     cd credbl
@@ -28,8 +40,11 @@
 
     # if called for the first time, will request credentials
     # second time may ask for your _system_ credentials; mark "always allow"
-    # if you believe you've entered wrong credentials first time, call with `reset=True`
+
     connection_str = get_mssql_connection_string("tp-mssql-settings.yaml")
+    
+    # if you believe you've entered wrong credentials first time, call with `reset=True`
+    connection_str = get_mssql_connection_string("tp-mssql-settings.yaml", reset=True)
     
     conn = pyodbc.connect(connection_str)
     
@@ -54,7 +69,7 @@ The `"mongo-settings.yaml"` file must contain following:
     url: mongodb://10.20.30.40:27017
     db: 'databasename'
 
-Alternatively / optionally to URL, server or ip and port can be provided:
+Alternatively / optionally to URL, server or IP address and port can be provided:
 
     server: xyz.company.org
     ip: 10.20.30.40
@@ -67,7 +82,7 @@ Alternatively / optionally to URL, server or ip and port can be provided:
 
     In [2]: credbl.get_credentials('something')
     enter user name for 'something': []: myname
-    enter password for 'myname'
+    enter password for 'myname':
     Out[2]: ('myname', 'xyz')
 
     In [3]: credbl.get_credentials('something')
