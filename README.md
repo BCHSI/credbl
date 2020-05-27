@@ -16,8 +16,11 @@
 
     # if called for the first time, will request credentials
     # second time may ask for your _system_ credentials; mark "always allow"
-    # if you believe you've entered wrong credentials first time, call with `reset=True`
+
     connection_str = get_mssql_connection_string("tp-mssql-settings.yaml")
+    
+    # if you believe you've entered wrong credentials first time, call with `reset=True`
+    connection_str = get_mssql_connection_string("tp-mssql-settings.yaml", reset=True)
     
     conn = pyodbc.connect(connection_str)
     
