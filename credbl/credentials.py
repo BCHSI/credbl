@@ -3,6 +3,7 @@ import click
 import getpass
 import keyring
 import yaml
+import urllib
 
 try:
     FileNotFoundError
@@ -85,7 +86,7 @@ def get_credentials(service_id,  reset=False):
     return username, pwd
 
 
-def get_mssql_connection_string(yamlfile, reset=False, **kwargs):
+def get_mssql_connection_string(yamlfile, reset=False, urlencode=False, **kwargs):
     """ Generate MS SQL Server connection string using a YAML config file and 
     credentials provided by the user and / or stored 
     in the system registry (Windows) or keyring (Mac, Unix).
@@ -100,6 +101,7 @@ def get_mssql_connection_string(yamlfile, reset=False, **kwargs):
         database:  database name
         driver:    (optional), e.g. FreeTDS
     - reset (default: False) -- whether to reset password in case it is already in the registry
+    - urlencode -- encode using `urllib.parse.quote_plus`
     parameters from the YAML file can be overriden by providing 
     named keyword arguments to this function, e.g.:
     get_mssql_connection_string("mydatabase.yaml", driver="{SQL Server}")
@@ -136,7 +138,8 @@ def get_mssql_connection_string(yamlfile, reset=False, **kwargs):
             # 'TDS_Version={tds_version};'
             'server={server};port={port};DATABASE={database};'
             'uid={username};pwd={pwd};').format(username=username, pwd=pwd, **params)
-
+    if urlencode:
+        connection_str = urllib.parse.quote_plus(connection_str)
     return connection_str
 
 def get_password_qt5():
