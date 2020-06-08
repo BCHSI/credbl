@@ -4,11 +4,15 @@
 
 ### Python package
 
-from terminal shell:
+from terminal shell (standard):
+    
+    pip install git+git://github.com/BCHSI/credbl.git#egg=credbl
+
+(development mode):
 
     git clone https://github.com/BCHSI/credbl
     cd credbl
-    pip install .
+    pip install -e .
 
 ### R package
 
