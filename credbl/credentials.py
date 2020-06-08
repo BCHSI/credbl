@@ -2,8 +2,10 @@ import os
 import click
 import getpass
 import keyring
+from keyring.errors import NoKeyringError
 import yaml
 import urllib
+import logging
 
 try:
     FileNotFoundError
@@ -65,17 +67,31 @@ def get_odbc_credentials_windows(server_name, reset=False,
     os.system('c:\\Windows\\SysWOW64\\odbcad32.exe')    
     return None
 
+def get_username(service_id=""):
+    if 'USERNAME' in (os.environ): 
+        username = os.environ['USERNAME']
+    elif 'USER' in os.environ:
+        username = os.environ['USER']
+    else:
+        username = ''
+    username = click.prompt("enter user name for '{}':".format(service_id),
+                  type=str, default=username)
+    return username
+
 def get_credentials(service_id,  reset=False):
     """request username & password or retrieve them from keyring;
     if reset=True, the password will be reset if found in the keyring"""
-    username = keyring.get_password(service_id, "username")
+    try:
+        username = keyring.get_password(service_id, "username")
+    except NoKeyringError as ee:
+        logging.warning(str(ee))
+        logging.warning("credentials cannot be saved")
+        username = get_username(service_id=service_id)
+        pwd = getpass.getpass("enter password for '{}':".format(username))
+        return username, pwd
+
     if reset or (username is None):
-        if 'USERNAME' in (os.environ): 
-            username = os.environ['USERNAME']
-        else:
-            username = ''
-        username = click.prompt("enter user name for '{}':".format(service_id),
-                      type=str, default=username)
+        username = get_username(service_id=service_id)
         # username = input("enter user name for '{}':".format(service_id))
         keyring.set_password(service_id, "username", username)
 

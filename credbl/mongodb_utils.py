@@ -54,6 +54,12 @@ def connect_mongodb(configfile, reset=False, **kwargs):
     kwargs = {kk.lower():vv for kk,vv in kwargs.items()}
     dbconfig.update(**kwargs)
     
+    if 'server' not in dbconfig:
+        dbconfig['server'] = (dbconfig["url"]
+                              .replace("mongodb://","")
+                              .split("/")[0].split(":")[0]
+                              )
+
     name = dbconfig['name'] if ('name' in dbconfig) else dbconfig['server']
     username, pwd = get_credentials(name, reset=reset)
     
