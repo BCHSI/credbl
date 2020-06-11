@@ -66,7 +66,6 @@ def get_odbc_credentials_windows(server_name, reset=False,
                         logging.debug("found a 'Server' entry: " + keydict["Server"])
                         return None
                 # value = winreg.QueryValue(key, skey_name)
-                # return None
             except (FileNotFoundError, WindowsError):
                 pass
     os.system('c:\\Windows\\SysWOW64\\odbcad32.exe')    
@@ -107,7 +106,8 @@ def get_credentials(service_id,  reset=False):
     return username, pwd
 
 
-def get_mssql_connection_string(yamlfile, reset=False, urlencode=False, **kwargs):
+def get_mssql_connection_string(yamlfile, reset=False, urlencode=False, 
+                                check_winreg=True, **kwargs):
     """ Generate MS SQL Server connection string using a YAML config file and 
     credentials provided by the user and / or stored 
     in the system registry (Windows) or keyring (Mac, Unix).
@@ -139,7 +139,8 @@ def get_mssql_connection_string(yamlfile, reset=False, urlencode=False, **kwargs
     if os.name == 'nt':
         dbconfig.update(**kwargs)
         name = dbconfig['name'] if ('name' in dbconfig) else dbconfig['server']
-        get_odbc_credentials_windows(name, reset=reset)
+        if check_winreg:
+            get_odbc_credentials_windows(name, reset=reset)
         connection_str = (
             'driver={SQL Server};'+
             'server={server};port={port};DATABASE={database};'.format(**dbconfig)
