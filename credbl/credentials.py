@@ -2,10 +2,14 @@ import os
 import click
 import getpass
 import keyring
-from keyring.errors import NoKeyringError
 import yaml
 import urllib
 import logging
+
+try:
+    from keyring.errors import NoKeyringError
+except:
+    NoKeyringError = Exception
 
 try:
     FileNotFoundError
