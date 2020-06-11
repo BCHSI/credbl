@@ -63,10 +63,10 @@ def get_odbc_credentials_windows(server_name, reset=False,
                     keydict = (_get_leafs(subkey, n_subentries))
                     logging.debug("winreg entry: " + str(keydict))
                     if "Server" in keydict and (keydict["Server"]==server_name):
-                        # found!
+                        logging.debug("found a 'Server' entry: " + keydict["Server"])
                         return None
                 # value = winreg.QueryValue(key, skey_name)
-                return None
+                # return None
             except (FileNotFoundError, WindowsError):
                 pass
     os.system('c:\\Windows\\SysWOW64\\odbcad32.exe')    
