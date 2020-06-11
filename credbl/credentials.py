@@ -57,6 +57,7 @@ def get_odbc_credentials_windows(server_name, reset=False,
                     subkey = winreg.OpenKey(key, winreg.EnumKey(key, n))
                     n_subsubkeys, n_subentries, _ = winreg.QueryInfoKey(subkey)
                     keydict = (_get_leafs(subkey, n_subentries))
+                    logging.debug("winreg entry: " + str(keydict))
                     if "Server" in keydict and (keydict["Server"]==server_name):
                         # found!
                         return None
