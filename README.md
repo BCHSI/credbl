@@ -1,11 +1,11 @@
 # Credbl: database settings and credentials simplified
 
-There are many moving parts when setting up programmatic access to a database. Credbl divides (and conquers) it the following way:
+There are many moving parts when setting up programmatic access to a database. Credbl divides (and conquers) those bits and pieces the following way:
 - [connect-where] database server specific settings are read from a YAML configuration file provided by the database admin
 - [connect-who] user's credentials are requested and stored in [keyring](https://github.com/jaraco/keyring) or winreg (on Windows)
 - [connect-how] database drivers are chosen based on user's Operation system. 
 
-Currently credbl focuses on MS SQL Server connections
+Currently credbl focuses on MS SQL Server and MongoDB connections. You are welcome to submit issues and pull requests for other database types.
 
 ## Installation
 
