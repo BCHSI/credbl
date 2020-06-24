@@ -43,9 +43,25 @@ get help:
 
 ### connecting to a MS SQL Server
 
-    from credbl import get_mssql_connection_string
-    import pyodbc
+    from credbl import connect_mssql
+    conn = connect_mssql("tp-mssql-settings.yaml")
+
     
+Contents of `"tp-mssql-settings.yaml"` (assuming it is in the same folder as your script):
+
+    server:    12.34.56.78 (OR) mydatabase.mybusiness.com
+    port:      1234
+    database:  tp-inventory
+    driver:    FreeTDS (optional)
+
+### Low-level interface: 
+You might need to understand it if you would like to use SQL drivers
+or driver wrappers other than pyodbc, such as SQLAlchemy.
+
+#### with pyodbc
+
+    import pyodbc
+    from credbl import get_mssql_connection_string 
 
     # if called for the first time, will request credentials
     # second time may ask for your _system_ credentials; mark "always allow"
@@ -56,13 +72,16 @@ get help:
     connection_str = get_mssql_connection_string("tp-mssql-settings.yaml", reset=True)
     
     conn = pyodbc.connect(connection_str)
-    
-Contents of `"tp-mssql-settings.yaml"` (assuming it is in the same folder as your script):
 
-    server:    12.34.56.78 (OR) mydatabase.mybusiness.com
-    port:      1234
-    database:  tp-inventory
-    driver:    FreeTDS (optional)
+### with SqlAlchemy
+
+    import sqlalchemy
+    from credbl import get_mssql_connection_string 
+
+    connection_str_encoded = get_mssql_connection_string('covid19_omop.yaml',
+                                                     urlencode=True)
+    connection_uri = 'mssql+pyodbc:///?odbc_connect={}'.format(connection_str_encoded)
+    conn = sqlalchemy.create_engine(connection_uri)
 
 ### connecting to mongodb
 
