@@ -58,11 +58,14 @@ get help:
     # second time may ask for your _system_ credentials; mark "always allow"
 
     connection_str = get_mssql_connection_string("tp-mssql-settings.yaml")
+    # you'll be requested to enter your credentials when running it for the first time
+    conn = pyodbc.connect(connection_str)
     
-    # if you believe you've entered wrong credentials first time, call with `reset=True`
+    
+#### if you believe you've entered wrong credentials first time, call with `reset=True`
+
     connection_str = get_mssql_connection_string("tp-mssql-settings.yaml", reset=True)
     
-    conn = pyodbc.connect(connection_str)
     
 Contents of `"tp-mssql-settings.yaml"` (assuming it is in the same folder as your script):
 
