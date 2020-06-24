@@ -1,4 +1,11 @@
-# Credbl: database credential management package
+# Credbl: database settings and credentials simplified
+
+There are many moving parts when setting up programmatic access to a database. Credbl divides (and conquers) those bits and pieces the following way:
+- [connect-where] database server specific settings are read from a YAML configuration file provided by the database admin
+- [connect-who] user's credentials are requested and stored in [keyring](https://github.com/jaraco/keyring) or winreg (on Windows)
+- [connect-how] database drivers are chosen based on user's Operation system. 
+
+Currently credbl focuses on MS SQL Server and MongoDB connections. You are welcome to submit issues and pull requests for other database types.
 
 ## Installation
 
@@ -47,7 +54,8 @@ get help:
     conn = connect_mssql("tp-mssql-settings.yaml")
 
     
-Contents of `"tp-mssql-settings.yaml"` (assuming it is in the same folder as your script):
+### Contents of database configuration file
+In a previous example, `"tp-mssql-settings.yaml"` must contain:
 
     server:    12.34.56.78 (OR) mydatabase.mybusiness.com
     port:      1234
@@ -67,8 +75,12 @@ or driver wrappers other than pyodbc, such as SQLAlchemy.
     # second time may ask for your _system_ credentials; mark "always allow"
 
     connection_str = get_mssql_connection_string("tp-mssql-settings.yaml")
+    # you'll be requested to enter your credentials when running it for the first time
+    conn = pyodbc.connect(connection_str)
     
-    # if you believe you've entered wrong credentials first time, call with `reset=True`
+    
+#### if you believe you've entered wrong credentials first time, call with `reset=True`
+
     connection_str = get_mssql_connection_string("tp-mssql-settings.yaml", reset=True)
     
     conn = pyodbc.connect(connection_str)
