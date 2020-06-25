@@ -61,9 +61,17 @@ def connect_mongodb(configfile, reset=False, **kwargs):
                               )
 
     name = dbconfig['name'] if ('name' in dbconfig) else dbconfig['server']
-    username, pwd = get_credentials(name, reset=reset)
     
-    db = get_mongo_handle(username= username, 
-                          password = pwd,
-                          **dbconfig)
+    while True:
+        username, pwd = get_credentials(name, reset=reset)
+        try:
+            db = get_mongo_handle(username= username, 
+                                password = pwd,
+                                **dbconfig)
+            break
+        except pyodbc.ProgrammingError as ee:
+            logging.warning(str(ee))
+            if not 'Login failed for user' in str(ee):
+                raise ee
+            reset=True
     return db

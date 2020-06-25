@@ -156,7 +156,7 @@ def get_mssql_connection_string(yamlfile, reset=False, urlencode=False,
             params.update(**kwargs)
         username, pwd = get_credentials(params['server'], reset=reset)
         if '\\' not in username and '@' not in username:
-            logging.warning("Did you forget to enter domain as in 'DOMAIN\username' or 'username@DOMAIN'?\n"+
+            logging.warning("Did you forget to enter domain as in 'DOMAIN\\username' or 'username@DOMAIN'?\n"+
             "No worries, re-run this function with `reset=True` flag")
         connection_str = (
             'driver={{{driver}}};'
