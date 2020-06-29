@@ -15,7 +15,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     install_requires=['pymongo', 'pyyaml', 'click', 'keyring'],
     #packages=setuptools.find_packages(),
-    # url="https://github.com/pypa/sampleproject",
+    url="https://https://github.com/BCHSI/credbl",
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
