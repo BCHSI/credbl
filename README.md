@@ -2,7 +2,9 @@
 
 There are many moving parts when setting up programmatic access to a database. Credbl divides (and conquers) those bits and pieces the following way:
 - [connect-where] database server specific settings are read from a YAML configuration file provided by the database admin
-- [connect-who] user's credentials are requested and stored in [keyring](https://github.com/jaraco/keyring) or winreg (on Windows)
+- [connect-who] user's credentials are requested and stored in [keyring](https://github.com/jaraco/keyring) or winreg (on Windows).
+
+    The first time the user connects to the database with `connect_*` functions, the credentials will be requested and stored. Subsequent times, they will be silently retrieved and used to authenticate. If authentication fails due to wrong credentials, the user will be asked to enter credentials again.
 - [connect-how] database drivers are chosen based on user's Operation system. 
 
 Currently credbl focuses on MS SQL Server and MongoDB connections. You are welcome to submit issues and pull requests for other database types.
