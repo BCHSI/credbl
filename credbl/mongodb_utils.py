@@ -6,7 +6,7 @@ Created on Mon Apr 27 10:03:22 2020
 """
 import yaml
 from pymongo import MongoClient
-from pymongo.errors import ConnectionFailure
+from pymongo.errors import ConnectionFailure, OperationFailure
 from pymongo import errors as mongoerrors
 from .credentials import get_credentials
 
@@ -69,9 +69,9 @@ def connect_mongodb(configfile, reset=False, **kwargs):
                                 password = pwd,
                                 **dbconfig)
             break
-        except pyodbc.ProgrammingError as ee:
+        except OperationFailure as ee:
             logging.warning(str(ee))
-            if not 'Login failed for user' in str(ee):
+            if not 'Authentication failed' in str(ee):
                 raise ee
             reset=True
     return db
