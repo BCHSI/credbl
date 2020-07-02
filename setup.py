@@ -13,7 +13,9 @@ setuptools.setup(
     description="package for database cofiguration and credential management",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    install_requires=['pymongo', 'pyyaml', 'click', 'keyring'],
+    install_requires=['pymongo', 'pyyaml', 'click', 'keyring',
+        'keyrings.alt platform_system=="Linux"'
+    ],
     #packages=setuptools.find_packages(),
     url="https://https://github.com/BCHSI/credbl",
     classifiers=[
