@@ -14,7 +14,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     install_requires=['pymongo', 'pyyaml', 'click', 'keyring',
-        'keyrings.alt platform_system=="Linux"'
+        'keyrings.alt; platform_system=="Linux"'
     ],
     #packages=setuptools.find_packages(),
     url="https://https://github.com/BCHSI/credbl",

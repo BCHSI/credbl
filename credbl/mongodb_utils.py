@@ -12,12 +12,13 @@ from .credentials import get_credentials
 
 
 def get_mongo_handle(url=None, ip=None, server=None, port=27017,
-                     username=None, password=None, db=None):
+                     username=None, password=None, db=None, **kwargs):
     
     client = MongoClient(url or ip or server,
                          port=port,
                          username=username,
-                         password=password)
+                         password=password,
+                         **kwargs)
 
     if db is not None:
         try:
@@ -65,8 +66,8 @@ def connect_mongodb(configfile, reset=False, **kwargs):
     while True:
         username, pwd = get_credentials(name, reset=reset)
         try:
-            db = get_mongo_handle(username= username, 
-                                password = pwd,
+            db = get_mongo_handle(username=username,
+                                password=pwd,
                                 **dbconfig)
             break
         except OperationFailure as ee:
