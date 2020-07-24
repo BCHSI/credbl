@@ -142,6 +142,20 @@ get_mssql_driver <- function(dbconfig=list()){
   dbconfig
 }
 
+
+#' get a URI for mongodb connection given a config file and credentials stored in keyring
+get_mongodb_uri <- function(configfile, reset=F){
+  options(warn=-1)
+  dbconfig <- read_yaml(configfile)
+  options(warn=0)
+  credentials <- get_credentials(dbconfig$server, urlencode=T, 
+                                 forcekeyring=T, domain=F, reset=reset)
+  
+  mongo_uri = glue("mongodb://{uid}:{pwd}@{server}:{port}/{db}?authSource={authSource}&authMechanism={authMechanism}", 
+                   .envir = c(dbconfig, credentials))
+  return(mongo_uri)
+}
+
 #' query clean-up and substitution for mongoDB
 #'
 #' cleans up mongoDB JSON to standard JSON and
