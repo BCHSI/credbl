@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 setuptools.setup(
     name="credbl", # Replace with your own username
     packages=['credbl',],
-    version="0.0.3",
+    version="0.0.4",
     author="Dima Lituiev",
     author_email="d.lituiev@gmail.com",
     description="package for database cofiguration and credential management",
@@ -17,7 +17,7 @@ setuptools.setup(
         'keyrings.alt; platform_system=="Linux"'
     ],
     #packages=setuptools.find_packages(),
-    url="https://https://github.com/BCHSI/credbl",
+    url="https://github.com/BCHSI/credbl",
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
