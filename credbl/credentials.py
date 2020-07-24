@@ -21,9 +21,38 @@ def get_username(service_id=""):
                   type=str, default=username)
     return username
 
+
+def get_credentials_windows(service_id, reset=False, attempts=3)
+    keyring;
+    while attempts>0:
+        attempts -= 1
+        try:
+            if reset: # an event flow trick
+                raise NoKeyringError
+            kr = keyring.get_credential(service_id, None)
+            if kr is None:
+                raise NoKeyringError
+            return kr.username, kr.password
+        except NoKeyringError as ee:
+            print("")
+            print("="*50)
+            print("")
+            print(f'Please create an accont for "{service_id}" by clicking "Add..."')
+            print("Enter following:")
+            print(f"Log on to:     {service_id}")
+            print("Username :     your username")
+            print("Password :     your password")
+            # os.system("control keymgr.dll") # this one returns asynchronously
+            os.system("rundll32.exe keymgr.dll, KRShowKeyMgr")
+    else:
+        logging.warning("number of attempts exceeded")
+
+
 def get_credentials(service_id,  reset=False):
     """request username & password or retrieve them from keyring;
     if reset=True, the password will be reset if found in the keyring"""
+    if os.name == 'nt':
+        return get_credentials_windows(service_id,  reset=False)
     try:
         username = keyring.get_password(service_id, "username")
     except NoKeyringError as ee:
