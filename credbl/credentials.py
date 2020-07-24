@@ -22,7 +22,7 @@ def get_username(service_id=""):
     return username
 
 
-def get_credentials_windows(service_id, reset=False, attempts=3)
+def get_credentials_windows(service_id, reset=False, attempts=3):
     keyring;
     while attempts>0:
         attempts -= 1
