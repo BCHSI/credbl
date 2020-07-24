@@ -37,7 +37,7 @@ def get_credentials_windows(service_id, reset=False, attempts=3):
             print("")
             print("="*50)
             print("")
-            print(f'Please create an accont for "{service_id}" by clicking "Add..."')
+            print(f'Please create an account for "{service_id}" by clicking "Add..."')
             print("Enter following:")
             print(f"Log on to:     {service_id}")
             print("Username :     your username")
