@@ -13,12 +13,13 @@ from .credentials import get_credentials
 
 
 def get_mongo_handle(url=None, ip=None, server=None, port=27017,
-                     username=None, password=None, db=None):
+                     username=None, password=None, db=None, **kwargs):
     
     client = MongoClient(url or ip or server,
                          port=port,
                          username=username,
-                         password=password)
+                         password=password,
+                         **kwargs)
 
     # try a basic server operation
     client.server_info()['version']
