@@ -3,8 +3,8 @@
 #' @section credbl functions:
 #'
 #' \itemize{
-#' \item \code{\link{get_credentials}} -- retrive credentials 
-#' \item \code{\link{get_mssql_driver}} -- retrive driver
+#' \item \code{\link{get_credentials}}  -- retrieve credentials 
+#' \item \code{\link{get_mssql_driver}} -- retrieve driver
 #' \item \code{\link{mj}}               -- format mongodb query 
 #' \item \code{\link{date_to_mongo}}    -- convert date to mongodb format
 #' }

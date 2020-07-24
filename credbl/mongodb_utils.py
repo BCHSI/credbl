@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Apr 27 10:03:22 2020
-
 @author: DLituiev
 """
 import yaml
+import logging
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure, OperationFailure
 from pymongo import errors as mongoerrors
@@ -19,6 +19,8 @@ def get_mongo_handle(url=None, ip=None, server=None, port=27017,
                          username=username,
                          password=password,
                          **kwargs)
+    # try a basic server operation
+    client.server_info()['version']
 
     if db is not None:
         try:

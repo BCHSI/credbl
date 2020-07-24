@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 setuptools.setup(
     name="credbl", # Replace with your own username
     packages=['credbl',],
-    version="0.0.2",
+    version="0.0.3",
     author="Dima Lituiev",
     author_email="d.lituiev@gmail.com",
     description="package for database cofiguration and credential management",
