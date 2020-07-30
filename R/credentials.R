@@ -15,11 +15,13 @@ get_system_user <- function(){
 #' request credentials or retrieve them from system's keyring
 #' if reset=T -- clears the keyring
 get_credentials_direct <- function(dbname,  uid=NULL, reset=F, domain=T){
-  if (reset) keyring::key_delete(dbname, username = uid, keyring = NULL)
 
   uid <- keyring::key_list(dbname) %>%
     filter(!(username %in% c("username", "uid"))) %>%
     .[,2]  %>% tail(1)
+
+    if (length(uid)>0 & reset) keyring::key_delete(dbname, username = uid, keyring = NULL)
+
 
   if (length(uid)==0 || is.na(uid) || str_length(uid)==0) {
     
