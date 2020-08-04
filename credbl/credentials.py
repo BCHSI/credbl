@@ -52,7 +52,7 @@ def get_credentials(service_id,  reset=False):
     """request username & password or retrieve them from keyring;
     if reset=True, the password will be reset if found in the keyring"""
     if os.name == 'nt':
-        return get_credentials_windows(service_id,  reset=False)
+        return get_credentials_windows(service_id,  reset=reset)
     try:
         username = keyring.get_password(service_id, "username")
     except NoKeyringError as ee:
