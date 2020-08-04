@@ -1,6 +1,7 @@
 library(magrittr)
 library(glue)
 library(bit64)
+library(crayon)
 
 #' read current user name
 get_system_user <- function(){
@@ -72,13 +73,25 @@ get_credentials_windows <- function(server, reset=F,
     )
   }
   if (!registered){
+    highlight <- function(x) red(bold(x))
     message = glue("create an entry in ODBC Data Source Administrator for server
-                   {server}
-                   =============================
-                   You now will see the window where you'll need to press 'Add...' 
-                   in the first (User DSN) tab. Select 'SQL Server' Driver")
+                   {highlight(server)}
+               
+               Press '{highlight(\"Add...\")}'  in the first (User DSN) tab.
+               Select '{highlight(\"SQL Server\")}' Driver
+               {highlight(\"Name\")}          : short name describing the database (up to your imagination)
+               {highlight(\"Description\")}  : you may leave it blank
+               {highlight(\"Server\")}        : {highlight(server)}
+               ")
     print(message)
+
+    #sep <- paste0(rep("=", nchar(server)), collapse = '')
+    highlight <- function(x) paste0("<b>", x, "</b>")
+
+    message = glue("create an entry in ODBC Data Source Administrator for server
+                {highlight(server)}. See R console output for guidance.")
     rstudioapi::showDialog(title="Reminder", message=message)
+
     system('c:\\Windows\\SysWOW64\\odbcad32.exe')
     return(list(uid=NULL, pwd=NULL))
   }
@@ -140,6 +153,20 @@ get_mssql_driver <- function(dbconfig=list()){
     # dbconfig$TDS_Version <- "7.3"
   }
   dbconfig
+}
+
+
+#' get a URI for mongodb connection given a config file and credentials stored in keyring
+get_mongodb_uri <- function(configfile, reset=F){
+  options(warn=-1)
+  dbconfig <- read_yaml(configfile)
+  options(warn=0)
+  credentials <- get_credentials(dbconfig$server, urlencode=T, 
+                                 forcekeyring=T, domain=F, reset=reset)
+  
+  mongo_uri = glue("mongodb://{uid}:{pwd}@{server}:{port}/{db}?authSource={authSource}&authMechanism={authMechanism}", 
+                   .envir = c(dbconfig, credentials))
+  return(mongo_uri)
 }
 
 #' query clean-up and substitution for mongoDB
