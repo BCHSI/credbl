@@ -46,7 +46,7 @@ def _get_leafs(leaf_key, n_subsubkeys):
 
 
 def check_odbc_entry_windows(server_name, reset=False,
-                                 arch_keys = {'KEY_WOW64_32KEY', 'KEY_WOW64_64KEY'}):
+                             arch_keys = {'KEY_WOW64_32KEY', 'KEY_WOW64_64KEY'}):
     """checks whether the server is registered in the system,
     and if not launches ODBC management program"""
     arch_keys = [getattr(winreg, kk) for kk in arch_keys]
@@ -125,6 +125,7 @@ def get_mssql_connection_string(yamlfile, reset=False, urlencode=False,
     dbconfig.update(**kwargs)
 
     name = dbconfig['name'] if ('name' in dbconfig) else dbconfig['server']
+    logging.debug(f"server name: {name}")
 
     # drop extra keys:
     for key in ["name", "driver_mac"]:

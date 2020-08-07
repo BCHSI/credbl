@@ -74,6 +74,8 @@ def connect_mongodb(configfile, reset=False, **kwargs):
             break
         except OperationFailure as ee:
             logging.warning(str(ee))
+            logging.debug(f"credentials name: {name}")
+            logging.debug(f"username: {username}")
             if not 'Authentication failed' in str(ee):
                 raise ee
             reset=True

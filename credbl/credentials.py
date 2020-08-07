@@ -31,6 +31,7 @@ def get_credentials_windows(service_id, reset=False, attempts=3):
                 raise NoKeyringError
             kr = keyring.get_credential(service_id, None)
             if kr is None:
+                logging.warning(f"no credentials found for {service_id} in Windows registry")
                 raise NoKeyringError
             return kr.username, kr.password
         except NoKeyringError as ee:
