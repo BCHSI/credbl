@@ -28,13 +28,14 @@ def get_credentials_windows(service_id, reset=False, attempts=3):
         attempts -= 1
         try:
             if reset: # an event flow trick
-                raise NoKeyringError
+                logging.debug("resetting the credentials")
+                raise ValueError
             kr = keyring.get_credential(service_id, None)
             if kr is None:
                 logging.warning(f"no credentials found for {service_id} in Windows registry")
-                raise NoKeyringError
+                raise ValueError(f"no credentials found for {service_id} in Windows registry")
             return kr.username, kr.password
-        except NoKeyringError as ee:
+        except (ValueError, NoKeyringError) as ee:
             print("")
             print("="*50)
             print("")
@@ -45,8 +46,10 @@ def get_credentials_windows(service_id, reset=False, attempts=3):
             print("Password :     your password")
             # os.system("control keymgr.dll") # this one returns asynchronously
             os.system("rundll32.exe keymgr.dll, KRShowKeyMgr")
+            reset = False
     else:
         logging.warning("number of attempts exceeded")
+        raise ValueError("unable to retrieve credentials. Number of attempts exceeded")
 
 
 def get_credentials(service_id,  reset=False):
