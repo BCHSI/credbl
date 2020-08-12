@@ -16,7 +16,7 @@ Currently credbl focuses on MS SQL Server and MongoDB connections. You are welco
 from terminal shell (standard):
 - latest release: `pip install credbl`
 
-- bleeding edge: `pip install git+git://github.com/BCHSI/credbl.git#egg=credbl`
+- bleeding edge: `pip install -U git+git://github.com/BCHSI/credbl.git#egg=credbl` (you might also need to add `--user`)
 
 - development mode
 
