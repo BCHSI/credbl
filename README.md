@@ -24,7 +24,7 @@ from terminal shell (standard):
         cd credbl
         pip install -e .
 
-on Mac, you might need to install libsodium using [homebrew](https://brew.sh/):
+on Mac, you might need to install [libsodium](https://github.com/jedisct1/libsodium) using [homebrew](https://brew.sh/):
 ```brew install libsodium```
 
 ### R package
