@@ -28,9 +28,12 @@ def get_credentials_windows(service_id, reset=False, attempts=3):
         attempts -= 1
         try:
             if reset: # an event flow trick
+                logging.info("resetting")
                 raise NoKeyringError
+            logging.info(f"attempting to retrieve crdentials for {service_id}")
             kr = keyring.get_credential(service_id, None)
             if kr is None:
+                logging.info(f"no crdentials found for {service_id}")
                 raise NoKeyringError
             return kr.username, kr.password
         except NoKeyringError as ee:
