@@ -16,7 +16,7 @@ Currently credbl focuses on MS SQL Server and MongoDB connections. You are welco
 from terminal shell (standard):
 - latest release: `pip install credbl`
 
-- bleeding edge: `pip install git+git://github.com/BCHSI/credbl.git#egg=credbl`
+- bleeding edge: `pip install -U git+git://github.com/BCHSI/credbl.git#egg=credbl` (you might also need to add `--user`)
 
 - development mode
 
@@ -24,7 +24,7 @@ from terminal shell (standard):
         cd credbl
         pip install -e .
 
-on Mac, you might need to install libsodium using [homebrew](https://brew.sh/):
+on Mac, you might need to install [libsodium](https://github.com/jedisct1/libsodium) using [homebrew](https://brew.sh/):
 ```brew install libsodium```
 
 ### R package
