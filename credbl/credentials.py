@@ -22,7 +22,8 @@ def get_username(service_id=""):
     return username
 
 
-def get_credentials_windows(service_id, reset=False, attempts=3):
+def get_credentials_windows(service_id, reset=False, attempts=3,
+                            info=None):
     keyring;
     while attempts>0:
         attempts -= 1
@@ -30,9 +31,10 @@ def get_credentials_windows(service_id, reset=False, attempts=3):
             if reset: # an event flow trick
                 logging.debug("resetting the credentials")
                 raise ValueError
+            logging.info(f"attempting to retrieve crdentials for {service_id}")
             kr = keyring.get_credential(service_id, None)
             if kr is None:
-                logging.warning(f"no credentials found for {service_id} in Windows registry")
+                #logging.warning(f"no credentials found for {service_id} in Windows registry")
                 raise ValueError(f"no credentials found for {service_id} in Windows registry")
             return kr.username, kr.password
         except (ValueError, NoKeyringError) as ee:
@@ -44,6 +46,8 @@ def get_credentials_windows(service_id, reset=False, attempts=3):
             print(f"Log on to:     {service_id}")
             print("Username :     your username")
             print("Password :     your password")
+            if info:
+                print(info)
             # os.system("control keymgr.dll") # this one returns asynchronously
             os.system("rundll32.exe keymgr.dll, KRShowKeyMgr")
             reset = False
@@ -52,11 +56,11 @@ def get_credentials_windows(service_id, reset=False, attempts=3):
         raise ValueError("unable to retrieve credentials. Number of attempts exceeded")
 
 
-def get_credentials(service_id,  reset=False):
+def get_credentials(service_id,  reset=False, windows_info=None):
     """request username & password or retrieve them from keyring;
     if reset=True, the password will be reset if found in the keyring"""
     if os.name == 'nt':
-        return get_credentials_windows(service_id,  reset=reset)
+        return get_credentials_windows(service_id,  reset=reset, info=windows_info)
     try:
         username = keyring.get_password(service_id, "username")
     except NoKeyringError as ee:

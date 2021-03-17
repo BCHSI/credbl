@@ -123,6 +123,7 @@ def get_mssql_connection_string(yamlfile, reset=False, urlencode=False,
 
     dbconfig = {kk.lower():vv for kk,vv in dbconfig.items()}
     dbconfig.update(**kwargs)
+    logging.debug(f"connection parameters: {dbconfig}")
 
     name = dbconfig['name'] if ('name' in dbconfig) else dbconfig['server']
     logging.debug(f"server name: {name}")
@@ -169,19 +170,21 @@ def connect_mssql(configfile, reset=False, backend=None, driver=None,
         - database
     """
     if backend == 'sqlalchemy':
-        urlencode=True
+        urlencode_=True
     else:
-        urlencode=False
+        urlencode_=False
 
     while True:
         connection_str = get_mssql_connection_string(configfile,
-                reset=reset, urlencode=urlencode,
+                reset=reset, urlencode=urlencode_,
                 driver=driver,
                 )
 
         if backend == 'sqlalchemy':
             connection_uri = 'mssql+pyodbc:///?odbc_connect={}'.format(connection_str)
             conn = sqlalchemy.create_engine(connection_uri, connect_args=kwargs)
+            conn.url.encoded = conn.url.drivername + ':///?' + \
+                    urllib.parse.urlencode(conn.url.query)
             break 
         elif backend is None or backend in ("odbc", "pyodbc"):
             try:

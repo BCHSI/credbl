@@ -64,9 +64,9 @@ def connect_mongodb(configfile, reset=False, **kwargs):
                               )
 
     name = dbconfig['name'] if ('name' in dbconfig) else dbconfig['server']
-    
+    windows_info="Credential type:    A Web site or program credential"
     while True:
-        username, pwd = get_credentials(name, reset=reset)
+        username, pwd = get_credentials(name, reset=reset, windows_info=windows_info)
         try:
             db = get_mongo_handle(username=username,
                                 password=pwd,
