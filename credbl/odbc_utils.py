@@ -166,6 +166,7 @@ def connect_mssql(configfile, reset=False, backend=None, driver=None,
     - backend       -- default: "pyodbc", alternatives: "sqlalchemy"
     - driver        -- default: "SQL Server" for Windows and "FreeTDS" otherwise
     - **kwargs      -- other arguments that will be passed to the backend
+        - database
     """
     if backend == 'sqlalchemy':
         urlencode=True
@@ -180,7 +181,7 @@ def connect_mssql(configfile, reset=False, backend=None, driver=None,
 
         if backend == 'sqlalchemy':
             connection_uri = 'mssql+pyodbc:///?odbc_connect={}'.format(connection_str)
-            conn = sqlalchemy.create_engine(connection_uri, **kwargs)
+            conn = sqlalchemy.create_engine(connection_uri, connect_args=kwargs)
             break 
         elif backend is None or backend in ("odbc", "pyodbc"):
             try:
