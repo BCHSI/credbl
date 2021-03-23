@@ -108,14 +108,34 @@ def get_config_credentials(yamlfile, reset=False, urlencode=False,
         if (key in dbconfig):
             dbconfig.pop(key)
 
-    if os.name == 'nt':
-        # assume passwordless LDAP authentication
-        if check_winreg:
-            check_odbc_entry_windows(name, reset=reset)
-    else:
-        username, pwd = get_credentials(name, reset=reset)
-        dbconfig['username'] = username
-        dbconfig['password'] = pwd
+    warn_cred = False 
+    for kk in ["password", "pwd"]:
+        if kk in dbconfig:
+            warn_cred = True
+            dbconfig['password'] = dbconfig[kk]
+    for kk in ["username", "user", "uid"]:
+        if kk in dbconfig:
+            warn_cred = True
+            dbconfig['username'] = dbconfig[kk]
+
+    if warn_cred:
+        logging.warning("storing your password in the config file is not a good idea"
+                "consider entering it interactively so that it's stored in the keyring"
+                )
+        if (("username" not in dbconfig) != ("password" not in dbconfig)):
+            logging.warning("found only a part of credentials")
+
+    found_credentials = ("username" in dbconfig) and ("password" in dbconfig) 
+    if not found_credentials:
+        if os.name == 'nt':
+            # assume passwordless LDAP authentication
+            if check_winreg:
+                check_odbc_entry_windows(name, reset=reset)
+        else:
+            username, pwd = get_credentials(name, reset=reset)
+            dbconfig['username'] = username
+            dbconfig['password'] = pwd
+
     if urlencode:
         # a shortcut
         qu = urllib.parse.quote_plus
