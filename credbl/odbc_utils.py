@@ -6,6 +6,10 @@ from .credentials import get_credentials
 
 try:
     import pyodbc
+except ImportError as ee:
+    logging.warning(str(ee))
+
+try:
     import sqlalchemy
 except ImportError as ee:
     logging.warning(str(ee))
@@ -78,6 +82,47 @@ def _enclose_value_with_spaces(vv):
      return vv if not isinstance(vv,str) or " " not in vv else "{{{}}}".format(vv)
 
 
+def get_config_credentials(yamlfile, reset=False, urlencode=False,
+                           check_winreg=True, **kwargs):
+    kwargs = {kk.lower():vv for kk,vv in kwargs.items() if vv is not None}
+
+    with open(yamlfile) as fh:
+        dbconfig = yaml.load(fh, Loader=yaml.SafeLoader)
+
+    dbconfig = {kk.lower():vv for kk,vv in dbconfig.items()}
+    dbconfig.update(**kwargs)
+    logging.debug(f"connection parameters: {dbconfig}")
+
+    if ('name' in dbconfig):
+        name = dbconfig['name']
+    elif 'host' in dbconfig:
+        name = dbconfig["host"]
+    elif 'server' in dbconfig:
+        name = dbconfig["server"]
+    else:
+        raise ValueError("no server / host name in the config file")
+
+    logging.debug(f"server name: {name}")
+    # drop extra keys:
+    for key in ["name", "driver_mac"]:
+        if (key in dbconfig):
+            dbconfig.pop(key)
+
+    if os.name == 'nt':
+        # assume passwordless LDAP authentication
+        if check_winreg:
+            check_odbc_entry_windows(name, reset=reset)
+    else:
+        username, pwd = get_credentials(name, reset=reset)
+        dbconfig['username'] = username
+        dbconfig['password'] = pwd
+    if urlencode:
+        # a shortcut
+        qu = urllib.parse.quote_plus
+        dbconfig = {kk: qu(vv) for kk, vv in dbconfig.items()}
+    return dbconfig
+
+
 def get_mssql_connection_string(yamlfile, reset=False, urlencode=False, 
                                 check_winreg=True, driver=None, **kwargs):
     """ Generate MS SQL Server connection string using a YAML config file and 
@@ -125,7 +170,15 @@ def get_mssql_connection_string(yamlfile, reset=False, urlencode=False,
     dbconfig.update(**kwargs)
     logging.debug(f"connection parameters: {dbconfig}")
 
-    name = dbconfig['name'] if ('name' in dbconfig) else dbconfig['server']
+    if ('name' in dbconfig):
+        name = dbconfig['name'] 
+    elif 'host' in dbconfig:
+        name = dbconfig["host"]
+    elif 'server' in dbconfig:
+        name = dbconfig["server"]
+    else:
+        raise ValueError("no server / host name in the config file")
+
     logging.debug(f"server name: {name}")
 
     # drop extra keys:
@@ -154,6 +207,28 @@ def get_mssql_connection_string(yamlfile, reset=False, urlencode=False,
     return connection_str
 
 
+def connect_sqlalchemy(configfile, reset=False,
+                       dialect='mysql',
+                       driver='pymysql', **kwargs):
+    while True:
+        dbconfig = get_config_credentials(configfile, reset=reset,
+                    urlencode=True, **kwargs)
+        if "dialect" in dbconfig:
+            dialect = dbconfig["dialect"]
+        if "driver" in dbconfig:
+            driver = dbconfig["driver"]
+
+        connection_uri = (f'{dialect}+{driver}://' +
+                    '{username}:{password}@{host}'.format(**dbconfig) +
+                    ("" if "port" not in dbconfig else ":{}".format(dbconfig["port"])) +
+                    '/{database}'.format(**dbconfig)
+                    )
+        conn = sqlalchemy.create_engine(connection_uri, connect_args=kwargs)
+        conn.url.encoded = conn.url.drivername + ':///?' + \
+                urllib.parse.urlencode(conn.url.query)
+        return conn
+
+
 def connect_mssql(configfile, reset=False, backend=None, driver=None,
                   **kwargs):
     """
@@ -167,6 +242,7 @@ def connect_mssql(configfile, reset=False, backend=None, driver=None,
     - backend       -- default: "pyodbc", alternatives: "sqlalchemy"
     - driver        -- default: "SQL Server" for Windows and "FreeTDS" otherwise
     - **kwargs      -- other arguments that will be passed to the backend
+        - database
     """
     if backend == 'sqlalchemy':
         urlencode_=True
@@ -181,7 +257,7 @@ def connect_mssql(configfile, reset=False, backend=None, driver=None,
 
         if backend == 'sqlalchemy':
             connection_uri = 'mssql+pyodbc:///?odbc_connect={}'.format(connection_str)
-            conn = sqlalchemy.create_engine(connection_uri, **kwargs)
+            conn = sqlalchemy.create_engine(connection_uri, connect_args=kwargs)
             conn.url.encoded = conn.url.drivername + ':///?' + \
                     urllib.parse.urlencode(conn.url.query)
             break 
@@ -200,3 +276,4 @@ def connect_mssql(configfile, reset=False, backend=None, driver=None,
             raise ValueError(f'unknown backend: "{backend}"')
 
     return conn
+
