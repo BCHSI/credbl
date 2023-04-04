@@ -2,12 +2,13 @@ library(magrittr)
 library(glue)
 library(bit64)
 library(crayon)
+library(stringr)
 
 #' read current user name
 get_system_user <- function(){
   user <- Sys.getenv("USERNAME")
   if (length(user)==0){
-    user <- str_split(Sys.getenv("HOME"),'/')[[1]] %>% tail(1)
+    user <- stringr::str_split(Sys.getenv("HOME"),'/')[[1]] %>% tail(1)
   }
   user
 }
@@ -17,29 +18,35 @@ get_system_user <- function(){
 get_credentials_direct <- function(dbname,  uid=NULL, reset=F, domain=T){
 
   uid <- keyring::key_list(dbname) %>%
-    filter(!(username %in% c("username", "uid"))) %>%
+    subset(!(username %in% c("username", "uid"))) %>%
     .[,2]  %>% tail(1)
 
     if (length(uid)>0 & reset) keyring::key_delete(dbname, username = uid, keyring = NULL)
 
 
-  if (length(uid)==0 || is.na(uid) || str_length(uid)==0) {
+  if (length(uid)==0 || is.na(uid) || stringr::str_length(uid)==0) {
     
     if (domain){
       title=paste("domain and username for '", dbname, "'")
-      message="Please enter your UCSF DOMAIN\\username"
+      message="Please enter your DOMAIN\\username"
       default = paste0('SOM\\', get_system_user())
     } else {
       title=paste("username for '", dbname, "'")
       message="Please enter your username"
       default=get_system_user()
     }
-    uid <- rstudioapi::showPrompt(title=title,
-                                  message=message, default=default)
-    print(uid)
-    stopifnot(length(uid)>0)
-    if (domain) stopifnot(grepl('\\\\', uid))
-    pwd <- rstudioapi::askForPassword(glue("{dbname} password for {uid}"))
+    uid <- NULL
+    while (is.null(uid)){
+        uid <- rstudioapi::showPrompt(title=title,
+                                      message=message, default=default)
+        print(uid)
+        stopifnot(length(uid)>0)
+        if (domain) if(!grepl('\\\\', uid)){
+            sure <- rstudioapi::showQuestion("No domain specified!", "are you sure your login has no DOMAIN\\ prefix?")
+            if (!sure) {uid <- NULL}
+        }
+    }
+    pwd <- rstudioapi::askForPassword(glue::glue("{dbname} password for {uid}"))
     keyring::key_set_with_value(service=dbname, username=uid, password=pwd)
   } else {
     #uid <- keyring::key_list(dbname) %>%
@@ -76,7 +83,7 @@ get_credentials_windows <- function(server, reset=F,
   }
   if (!registered){
     highlight <- function(x) red(bold(x))
-    message = glue("create an entry in ODBC Data Source Administrator for server
+    message = glue::glue("create an entry in ODBC Data Source Administrator for server
                    {highlight(server)}
                
                Press '{highlight(\"Add...\")}'  in the first (User DSN) tab.
@@ -90,7 +97,7 @@ get_credentials_windows <- function(server, reset=F,
     #sep <- paste0(rep("=", nchar(server)), collapse = '')
     highlight <- function(x) paste0("<b>", x, "</b>")
 
-    message = glue("create an entry in ODBC Data Source Administrator for server
+    message = glue::glue("create an entry in ODBC Data Source Administrator for server
                 {highlight(server)}. See R console output for guidance.")
     rstudioapi::showDialog(title="Reminder", message=message)
 
@@ -114,7 +121,7 @@ get_credentials_windows <- function(server, reset=F,
 #' @param domain    require username to have a domain prefix ("domain\\username")
 #' @return list(uid="myusername", pwd="password") # on Mac / Unix and list(uid=NULL, pwd=NULL) # on Windows
 get_credentials <- function(server=NULL, reset=F, urlencode=F, forcekeyring=F, domain=T){
-  print(glue("retrieving credentials for '{server}'"))
+  print(glue::glue("retrieving credentials for '{server}'"))
   if ((Sys.info()['sysname'] == 'Windows')&&!forcekeyring){
     credentials <- get_credentials_windows(server, reset=reset)
   } else {
@@ -166,7 +173,7 @@ get_mongodb_uri <- function(configfile, reset=F){
   credentials <- get_credentials(dbconfig$server, urlencode=T, 
                                  forcekeyring=T, domain=F, reset=reset)
   
-  mongo_uri = glue("mongodb://{uid}:{pwd}@{server}:{port}/{db}?authSource={authSource}&authMechanism={authMechanism}", 
+  mongo_uri = glue::glue("mongodb://{uid}:{pwd}@{server}:{port}/{db}?authSource={authSource}&authMechanism={authMechanism}", 
                    .envir = c(dbconfig, credentials))
   return(mongo_uri)
 }
